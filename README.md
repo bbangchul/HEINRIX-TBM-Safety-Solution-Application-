@@ -86,8 +86,7 @@ Heinrix TBM Application은 현장 안전회의(TBM)의 생성, 참여자 관리,
 ## TBM ERD
 - TBM 도메인의 컬렉션 관계(회사/프로젝트/세션/근로자/서명)를 시각화한 ERD를 연결합니다.
 
-<img src="docs/images/tbm_erd.png" alt="TBM ERD" width="280" />
-<img src="docs/images/tbm_erd_from_firestore_v1.drawio.png" alt="TBM ERD from Firestore v1" width="280" />
+<img src="docs/images/tbm_erd_from_firestore_v1.drawio.png" alt="TBM ERD from Firestore v1" width="500" />
 
 ## 기술 스택
 - Frontend: Flutter, Provider
