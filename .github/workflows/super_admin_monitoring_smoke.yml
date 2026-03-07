@@ -1,0 +1,51 @@
+name: super-admin-monitoring-smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_id:
+        description: "Monitoring target project id"
+        required: false
+        default: "tbm-application-v2"
+      freshness:
+        description: "Log query window (e.g. 30m, 1h)"
+        required: false
+        default: "30m"
+  schedule:
+    - cron: "*/30 * * * *"
+
+jobs:
+  monitoring-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      MONITORING_PROJECT_ID: ${{ github.event.inputs.project_id || vars.SUPER_ADMIN_PROJECT_ID || 'tbm-application-v2' }}
+      MONITORING_FRESHNESS: ${{ github.event.inputs.freshness || '30m' }}
+      ERROR_MAX: ${{ vars.SUPER_ADMIN_ALERT_ERROR_MAX || '5' }}
+      PERMISSION_DENIED_MAX: ${{ vars.SUPER_ADMIN_ALERT_PERMISSION_DENIED_MAX || '25' }}
+      UNAUTH_MAX: ${{ vars.SUPER_ADMIN_ALERT_UNAUTH_MAX || '20' }}
+      DELETE_ERROR_MAX: ${{ vars.SUPER_ADMIN_ALERT_DELETE_ERROR_MAX || '0' }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: validate-monitoring-secret
+        env:
+          SA_KEY_JSON: ${{ secrets.SUPER_ADMIN_GCP_SA_KEY_JSON }}
+        run: |
+          if [[ -z "${SA_KEY_JSON:-}" ]]; then
+            echo "Missing secret: SUPER_ADMIN_GCP_SA_KEY_JSON"
+            exit 1
+          fi
+
+      - name: auth-gcp
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.SUPER_ADMIN_GCP_SA_KEY_JSON }}
+
+      - name: setup-gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: run-monitoring-smoke-check
+        run: |
+          bash super_admin_console/scripts/ops/monitoring_smoke_check.sh "$MONITORING_PROJECT_ID"
