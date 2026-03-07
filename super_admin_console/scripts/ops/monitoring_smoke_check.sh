@@ -16,21 +16,32 @@ if ! command -v gcloud >/dev/null 2>&1; then
 fi
 
 # Cloud Functions v2는 cloud_run_revision, v1은 cloud_function 로그를 사용한다.
-BASE_FILTER='(resource.type="cloud_run_revision" OR resource.type="cloud_function") AND (resource.labels.service_name=~"admin.*" OR resource.labels.function_name=~"admin.*")'
+BASE_FILTER='((resource.type="cloud_run_revision" AND resource.labels.service_name=~"admin.*") OR (resource.type="cloud_function" AND resource.labels.function_name=~"admin.*"))'
 
 count_logs() {
   local filter="$1"
-  gcloud logging read "$filter" \
-    --project="$PROJECT_ID" \
-    --freshness="$FRESHNESS" \
-    --limit="$LIMIT" \
-    --format="value(timestamp)" 2>/dev/null | sed '/^$/d' | wc -l | tr -d ' '
+  local output
+  if ! output="$(
+    gcloud logging read "$filter" \
+      --project="$PROJECT_ID" \
+      --freshness="$FRESHNESS" \
+      --limit="$LIMIT" \
+      --format="value(timestamp)" 2>&1
+  )"; then
+    echo "[MONITORING][WARN] log query failed; fallback to 0" >&2
+    echo "[MONITORING][WARN] filter=$filter" >&2
+    echo "[MONITORING][WARN] $(echo "$output" | tr '\n' ' ' | cut -c1-280)" >&2
+    echo "0"
+    return 0
+  fi
+
+  echo "$output" | sed '/^$/d' | wc -l | tr -d ' '
 }
 
 ERROR_FILTER="$BASE_FILTER AND severity>=ERROR"
 PERMISSION_DENIED_FILTER="$BASE_FILTER AND (textPayload=~\"permission-denied|PERMISSION_DENIED\" OR jsonPayload.message=~\"permission-denied|PERMISSION_DENIED\")"
 UNAUTH_FILTER="$BASE_FILTER AND (textPayload=~\"UNAUTHENTICATED|unauthenticated\" OR jsonPayload.message=~\"UNAUTHENTICATED|unauthenticated\")"
-DELETE_USER_ERROR_FILTER="$BASE_FILTER AND (resource.labels.function_name=\"adminDeleteOrAnonymizeUser\" OR resource.labels.service_name=~\"admindeleteoranonymizeuser\") AND severity>=ERROR"
+DELETE_USER_ERROR_FILTER='((resource.type="cloud_run_revision" AND resource.labels.service_name=~"admindeleteoranonymizeuser.*") OR (resource.type="cloud_function" AND resource.labels.function_name="adminDeleteOrAnonymizeUser")) AND severity>=ERROR'
 
 ERROR_COUNT="$(count_logs "$ERROR_FILTER")"
 PERMISSION_DENIED_COUNT="$(count_logs "$PERMISSION_DENIED_FILTER")"
