@@ -32,7 +32,7 @@ on:
 jobs:
   static-guards:
     name: static-guards
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - name: checkout
@@ -78,7 +78,7 @@ jobs:
 
   regression-e2e-live:
     name: regression-e2e-live
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     needs: static-guards
     if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
