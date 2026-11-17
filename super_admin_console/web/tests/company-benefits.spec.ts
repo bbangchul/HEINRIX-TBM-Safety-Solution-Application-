@@ -53,8 +53,8 @@ test.beforeEach(async ({ page }) => {
   await page.route("**/src/lib/api/admin-api.ts", route => route.fulfill({
     contentType: "text/javascript", body: `
       const rows = [['active','활성 회사'],['none','미설정 회사'],['scheduled','시작 예정 회사'],['expired','만료 회사'],['revoked','종료 회사'],['unlimited','내부 테스트 회사'],['pending','승인 대기 회사']].map(([id,name])=>({
-        id:'request-'+id,companyId:'test-'+id,approvedCompanyId:id==='pending'?null:'test-'+id,
-        companyName:name,requesterUid:'test-user',status:id==='pending'?'pending':'approved'
+        id:'request-'+id+'-12345678901234567890',companyId:'test-'+id,approvedCompanyId:id==='pending'?null:'test-'+id,
+        companyName:name,requesterUid:'qa-user-1234567890123456789012345678',status:id==='pending'?'pending':'approved'
       }));
       export const adminApi = {usingMockData:true,listCompanyApprovalRequests:async()=>rows};
     `,
@@ -74,7 +74,12 @@ test.beforeEach(async ({ page }) => {
         import ReactDOM from '/node_modules/.vite/deps/react-dom_client.js';
         import {CompanyBenefitsModal} from '/src/features/company-approval-requests/pages/CompanyBenefitsModal.tsx';
         import {CompanyApprovalRequestsPage} from '/src/features/company-approval-requests/pages/CompanyApprovalRequestsPage.tsx';
-        ReactDOM.createRoot(document.getElementById('root')).render(location.pathname.includes('list-test') ? React.createElement(CompanyApprovalRequestsPage) : React.createElement(CompanyBenefitsModal,{
+        const listPage = React.createElement('div',{className:'admin-shell'},
+          React.createElement('aside',{className:'admin-sidebar'},'안전한하루'),
+          React.createElement('div',{className:'admin-main'},
+            React.createElement('header',{className:'admin-topbar'},'관리자 콘솔'),
+            React.createElement('main',{className:'admin-content'},React.createElement(CompanyApprovalRequestsPage))));
+        ReactDOM.createRoot(document.getElementById('root')).render(location.pathname.includes('list-test') ? listPage : React.createElement(CompanyBenefitsModal,{
           companyId:'test-company',approvalRequestId:'test-request',companyName:'테스트 회사',onClose:()=>{}
         }));
       </script></body></html>`,
@@ -179,3 +184,29 @@ test("list recalculates expiry using refreshed server time", async ({ page }) =>
   await expect(active.getByText("만료", { exact: true })).toBeVisible();
   await expect(active.getByRole("button", { name: "즉시 종료", exact: true })).toBeDisabled();
 });
+
+for (const width of [1440, 1024, 768, 390, 320]) {
+  test(`action buttons stay readable and visible at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/benefits-list-test");
+    const row = page.getByRole("row").filter({ hasText: "활성 회사" });
+    const button = row.getByRole("button", { name: "코인 지급", exact: true });
+    await expect(button).toBeEnabled();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1)).toBeTruthy();
+    for (const item of await row.getByRole("button").all()) {
+      const metrics = await item.evaluate(el => {
+        const range = document.createRange(); range.selectNodeContents(el);
+        return { oneLine: range.getClientRects().length === 1, fits: el.scrollWidth <= el.clientWidth, noWrap: getComputedStyle(el).whiteSpace === "nowrap" };
+      });
+      expect(metrics).toEqual({ oneLine: true, fits: true, noWrap: true });
+    }
+    await expect(button).toBeInViewport();
+    const before = await button.boundingBox();
+    await page.locator(".table-wrap").evaluate(el => { el.scrollLeft = el.scrollWidth; });
+    await expect(button).toBeInViewport();
+    const after = await button.boundingBox();
+    expect(Math.abs(before!.x - after!.x)).toBeLessThan(2);
+    await button.click();
+    await expect(page.getByRole("tab", { name: "코인 지급", exact: true })).toHaveAttribute("aria-selected", "true");
+  });
+}

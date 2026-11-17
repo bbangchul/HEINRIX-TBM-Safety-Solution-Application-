@@ -94,10 +94,11 @@ a {
 .admin-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 260px 1fr;
+  grid-template-columns: 260px minmax(0, 1fr);
 }
 
 .admin-sidebar {
+  min-width: 0;
   border-right: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(10px);
@@ -161,6 +162,7 @@ a {
 }
 
 .admin-main {
+  min-width: 0;
   display: grid;
   grid-template-rows: auto 1fr;
 }
@@ -396,7 +398,28 @@ a {
   gap: 6px;
 }
 
+.admin-content,
+.page-scaffold,
+.page-scaffold-body {
+  min-width: 0;
+}
+
+.company-approval-actions {
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
+  align-items: center;
+}
+
+.company-approval-actions > .mono-text {
+  grid-column: 1 / -1;
+}
+
 .action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  flex-shrink: 0;
   border: 1px solid #c7d8f2;
   background: #f3f8ff;
   color: #204573;
@@ -531,6 +554,7 @@ a {
 }
 
 .table-wrap {
+  max-width: 100%;
   overflow: auto;
   border: 1px solid var(--line);
   border-radius: 12px;
@@ -564,6 +588,22 @@ a {
 
 .data-table tbody tr:last-child td {
   border-bottom: 0;
+}
+
+.data-table .data-table-sticky-right {
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  width: 292px;
+  min-width: 272px;
+  background: var(--surface);
+  border-left: 1px solid var(--line);
+  box-shadow: -5px 0 10px rgba(10, 25, 48, 0.06);
+}
+
+.data-table th.data-table-sticky-right {
+  z-index: 2;
+  background: #f7faff;
 }
 
 .table-empty {
@@ -749,7 +789,7 @@ a {
 
 @media (max-width: 1040px) {
   .admin-shell {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .admin-sidebar {
@@ -804,5 +844,32 @@ a {
     right: 16px;
     bottom: 16px;
     width: min(360px, calc(100vw - 32px));
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-topbar {
+    padding: 16px;
+  }
+
+  .admin-topbar-actions {
+    flex-wrap: wrap;
+  }
+
+  .admin-content {
+    padding: 12px;
+  }
+
+  .page-scaffold-body {
+    padding: 12px;
+  }
+
+  .company-approval-actions {
+    grid-template-columns: repeat(2, max-content);
+  }
+
+  .data-table .data-table-sticky-right {
+    width: 200px;
+    min-width: 200px;
   }
 }

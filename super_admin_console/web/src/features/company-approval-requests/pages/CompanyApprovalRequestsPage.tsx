@@ -228,9 +228,9 @@ export function CompanyApprovalRequestsPage() {
     {
       key: "actions",
       header: "액션",
-      width: "360px",
+      sticky: "right",
       render: (row) => (
-        <div className="table-actions">
+        <div className="table-actions company-approval-actions">
           <button type="button" className="action-btn subtle" onClick={() => setDetailTarget(row)}>
             상세
           </button>

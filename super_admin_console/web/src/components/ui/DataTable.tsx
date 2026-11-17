@@ -6,6 +6,7 @@ export interface DataColumn<T> {
   render: (row: T) => ReactNode;
   width?: string;
   align?: "left" | "center" | "right";
+  sticky?: "right";
 }
 
 interface DataTableProps<T> {
@@ -29,7 +30,8 @@ export function DataTable<T>({
         <thead>
           <tr>
             {columns.map((column) => (
-              <th key={column.key} style={{ width: column.width, textAlign: column.align ?? "left" }}>
+              <th key={column.key} className={column.sticky === "right" ? "data-table-sticky-right" : undefined}
+                style={{ width: column.width, textAlign: column.align ?? "left" }}>
                 {column.header}
               </th>
             ))}
@@ -52,7 +54,8 @@ export function DataTable<T>({
             rows.map((row, index) => (
               <tr key={rowKey(row, index)}>
                 {columns.map((column) => (
-                  <td key={column.key} style={{ textAlign: column.align ?? "left" }}>
+                  <td key={column.key} className={column.sticky === "right" ? "data-table-sticky-right" : undefined}
+                    style={{ textAlign: column.align ?? "left" }}>
                     {column.render(row)}
                   </td>
                 ))}
