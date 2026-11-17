@@ -1,0 +1,31 @@
+{
+  "projects": {
+    "default": "tbm-application-v2",
+    "dev": "heinrix-super-admin-dev",
+    "stg": "heinrix-super-admin-stg",
+    "prod": "tbm-application-v2"
+  },
+  "targets": {
+    "heinrix-super-admin-dev": {
+      "hosting": {
+        "admin_dev": [
+          "heinrix-super-admin-dev"
+        ]
+      }
+    },
+    "heinrix-super-admin-stg": {
+      "hosting": {
+        "admin_stg": [
+          "heinrix-super-admin-stg"
+        ]
+      }
+    },
+    "tbm-application-v2": {
+      "hosting": {
+        "admin_prod": [
+          "tbm-application-v2-admin"
+        ]
+      }
+    }
+  }
+}

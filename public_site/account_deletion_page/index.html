@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>계정 및 데이터 삭제 요청 | 안전한하루</title>
+  <meta name="description" content="안전한하루 계정 및 관련 데이터 삭제 요청 안내" />
+  <link rel="canonical" href="https://join.heinrix.com/account_deletion_page/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="안전한하루" />
+  <meta property="og:title" content="계정 및 데이터 삭제 요청 | 안전한하루" />
+  <meta property="og:description" content="안전한하루 계정 및 데이터 삭제 요청 절차 안내" />
+  <meta property="og:url" content="https://join.heinrix.com/account_deletion_page/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="icon" type="image/png" href="/icon.png" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4fcf9;
+      --surface: #ffffff;
+      --ink: #08152d;
+      --ink-muted: #253d66;
+      --line: #d8e7f4;
+      --primary: #00c98b;
+      --primary-dark: #00a774;
+      --warn-bg: #fff8ea;
+      --warn-line: #ffd28f;
+      --warn-ink: #7a4a00;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 5% 0%, rgba(0, 201, 139, 0.08), transparent 35%),
+        radial-gradient(circle at 95% 90%, rgba(37, 61, 102, 0.06), transparent 30%),
+        var(--bg);
+      color: var(--ink);
+      font-family: "DM Sans", "Noto Sans KR", sans-serif;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(980px, 100% - 32px);
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(244, 252, 249, 0.85);
+      border-bottom: 1px solid rgba(216, 231, 244, 0.8);
+    }
+
+    .topbar-inner {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--ink);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .brand-app-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: block;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .brand-wordmark {
+      width: auto;
+      height: 25.6px;
+      display: block;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .top-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 0.92rem;
+    }
+
+    .top-links a {
+      color: var(--ink-muted);
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 8px;
+    }
+
+    .top-links a:hover {
+      background: rgba(0, 201, 139, 0.1);
+      color: var(--ink);
+    }
+
+    .top-links a[aria-current="page"] {
+      background: rgba(0, 201, 139, 0.14);
+      color: #046f4f;
+      font-weight: 700;
+    }
+
+    main {
+      padding: 42px 0 64px;
+    }
+
+    .policy-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(8, 21, 45, 0.06);
+      overflow: hidden;
+    }
+
+    .policy-head {
+      padding: 30px 28px 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(0, 201, 139, 0.07), rgba(0, 201, 139, 0));
+    }
+
+    .policy-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      border-radius: 999px;
+      background: rgba(0, 201, 139, 0.12);
+      color: #00865f;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 10px 0 6px;
+      font-size: clamp(1.45rem, 2.6vw, 2rem);
+      line-height: 1.3;
+    }
+
+    .policy-sub {
+      margin: 0;
+      color: var(--ink-muted);
+      font-size: 0.95rem;
+    }
+
+    .policy-body {
+      padding: 22px 28px 30px;
+    }
+
+    .policy-content h2 {
+      margin: 26px 0 12px;
+      font-size: 1.2rem;
+      line-height: 1.4;
+      color: #0e2447;
+    }
+
+    .policy-content h2:first-child {
+      margin-top: 0;
+    }
+
+    .policy-content p {
+      margin: 0 0 12px;
+      font-size: 0.97rem;
+      color: #102445;
+      line-height: 1.9;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+
+    .policy-content ul,
+    .policy-content ol {
+      margin: 0 0 14px;
+      padding-left: 20px;
+    }
+
+    .policy-content li {
+      margin: 0 0 6px;
+      color: #102445;
+      font-size: 0.96rem;
+      line-height: 1.85;
+    }
+
+    .highlight-box {
+      margin: 16px 0 18px;
+      padding: 16px 16px 14px;
+      border: 1px solid var(--warn-line);
+      background: var(--warn-bg);
+      border-radius: 12px;
+    }
+
+    .highlight-box p {
+      margin: 0;
+      color: var(--warn-ink);
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .request-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 8px 0 16px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border: none;
+      cursor: pointer;
+    }
+
+    .request-btn:hover {
+      filter: brightness(0.98);
+    }
+
+    .request-form {
+      margin: 10px 0 16px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fbfeff;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-bottom: 12px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-field label {
+      font-size: 0.88rem;
+      color: #17386a;
+      font-weight: 700;
+    }
+
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      width: 100%;
+      padding: 10px 11px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      font-family: inherit;
+      font-size: 0.92rem;
+      color: #102445;
+      background: #fff;
+    }
+
+    .form-field textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .helper-text {
+      margin: 2px 0 10px;
+      font-size: 0.86rem;
+      color: #35527d;
+      line-height: 1.6;
+    }
+
+    .blocked-text {
+      margin: 10px 0 0;
+      padding: 10px 12px;
+      border: 1px solid #f1b5b5;
+      border-radius: 10px;
+      background: #fff3f3;
+      color: #8e1f1f;
+      font-size: 0.9rem;
+      font-weight: 700;
+      display: none;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 11px 12px;
+      text-align: left;
+      vertical-align: top;
+      font-size: 0.93rem;
+      color: #102445;
+      line-height: 1.65;
+    }
+
+    th {
+      background: #f7fbff;
+      color: #17386a;
+      font-weight: 700;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    @media (max-width: 720px) {
+      .topbar-inner {
+        height: 58px;
+      }
+
+      .top-links {
+        gap: 6px;
+        font-size: 0.86rem;
+      }
+
+      .policy-head,
+      .policy-body {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      th,
+      td {
+        font-size: 0.88rem;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="https://heinrix.com/">
+        <img class="brand-app-icon" src="/assets/icon.png" alt="" />
+        <img class="brand-wordmark" src="/assets/anha-jeonhanharu-logo.png" alt="안전한하루" />
+      </a>
+      <nav class="top-links" aria-label="페이지 이동">
+        <a href="https://heinrix.com/">홈</a>
+        <a href="https://heinrix.com/privacy">개인정보처리방침</a>
+        <a href="https://heinrix.com/account-deletion" aria-current="page">계정 삭제</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <article class="policy-card">
+        <div class="policy-head">
+          <span class="policy-badge">ACCOUNT DELETION</span>
+          <h1>안전한하루 계정 및 데이터 삭제 요청</h1>
+          <p class="policy-sub">Google Play 스토어 등록정보의 계정 삭제 요청 링크로 사용할 수 있는 안내 페이지입니다.</p>
+        </div>
+
+        <div class="policy-body">
+          <div class="policy-content">
+            <h2>1. 앱 및 개발자 정보</h2>
+            <ul>
+              <li>앱 이름: 안전한하루</li>
+              <li>Google Play 개발자 이름: Bosc</li>
+              <li>운영사: 보스크 (대표자: 방성철)</li>
+              <li>공식 웹사이트: https://heinrix.com</li>
+              <li>계정 삭제 요청 URL: https://heinrix.com/account-deletion</li>
+            </ul>
+
+            <h2>2. 계정 삭제 요청 방법</h2>
+            <div class="highlight-box">
+              <p>앱을 삭제해도 계정은 자동으로 삭제되지 않습니다. 아래 절차에 따라 별도로 요청해 주세요.</p>
+            </div>
+
+            <div class="request-form">
+              <p class="helper-text">요청 정보를 입력한 뒤 버튼을 누르면 삭제 요청 메일이 자동 작성됩니다. (슈퍼 관리자 계정은 요청 불가)</p>
+              <div class="form-grid">
+                <div class="form-field">
+                  <label for="accountType">계정 유형</label>
+                  <select id="accountType" name="accountType">
+                    <option value="worker">근로자</option>
+                    <option value="tbm_leader">TBM 리더</option>
+                    <option value="project_admin">프로젝트 관리자</option>
+                    <option value="company_admin">회사 관리자</option>
+                    <option value="super_admin">슈퍼 관리자</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label for="name">성함</label>
+                  <input id="name" name="name" type="text" placeholder="홍길동" />
+                </div>
+                <div class="form-field full">
+                  <label for="accountId">가입 이메일 또는 휴대전화번호</label>
+                  <input id="accountId" name="accountId" type="text" placeholder="example@domain.com 또는 010-0000-0000" />
+                </div>
+                <div class="form-field full">
+                  <label for="contact">회신 받을 연락처</label>
+                  <input id="contact" name="contact" type="text" placeholder="회신 가능한 이메일 또는 전화번호" />
+                </div>
+                <div class="form-field full">
+                  <label for="reason">삭제 사유 (선택)</label>
+                  <textarea id="reason" name="reason" placeholder="선택 입력"></textarea>
+                </div>
+              </div>
+              <button id="requestDeleteBtn" class="request-btn" type="button">계정 삭제 요청 메일 보내기</button>
+              <p id="superAdminBlockedText" class="blocked-text">
+                슈퍼 관리자 계정은 삭제할 수 없습니다. 시스템 운영 연속성 확보를 위해 슈퍼 관리자 계정 삭제 요청은 차단됩니다.
+              </p>
+            </div>
+
+            <ol>
+              <li>요청 정보 입력 후 버튼을 눌러 메일을 보내거나 boscsafety@gmail.com으로 직접 요청 메일을 보냅니다.</li>
+              <li>메일에 가입 시 사용한 이메일 또는 휴대전화번호, 성함을 포함합니다.</li>
+              <li>접수 후 본인 확인을 진행하며, 필요 시 추가 정보를 요청할 수 있습니다.</li>
+              <li>본인 확인이 완료되면 계정 삭제를 처리하고 결과를 회신합니다. 단, 슈퍼 관리자 계정은 삭제 대상에서 제외됩니다.</li>
+            </ol>
+            <p>처리 기간: 접수일 기준 영업일 3일 이내 1차 회신, 본인 확인 완료 후 최대 7일 이내 계정 삭제 처리</p>
+
+            <h2>3. 삭제 또는 보관되는 데이터 유형 및 기간</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>데이터 유형</th>
+                  <th>처리 방식</th>
+                  <th>보관 기간</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>계정 기본 정보 (이름, 이메일, 휴대전화번호, 로그인 제공자 식별정보)</td>
+                  <td>삭제 요청 승인 후 계정 비활성화 및 삭제</td>
+                  <td>본인 확인 완료 후 최대 7일 이내 삭제</td>
+                </tr>
+                <tr>
+                  <td>인증 세션/토큰 정보</td>
+                  <td>계정 삭제 처리 시 즉시 무효화</td>
+                  <td>즉시 파기</td>
+                </tr>
+                <tr>
+                  <td>TBM 참여 이력, 출석 정보, 전자서명, 안전관리 기록</td>
+                  <td>계정과의 직접 식별 연결을 제거하고 내부 기준에 따라 제한 보관</td>
+                  <td>법령 준수 및 분쟁 대응 목적 범위에서 최대 3년 보관 후 삭제</td>
+                </tr>
+                <tr>
+                  <td>접속/오류/보안 로그</td>
+                  <td>서비스 안정성 및 보안 점검 목적 보관 후 삭제</td>
+                  <td>생성일로부터 최대 3개월 보관 후 삭제</td>
+                </tr>
+                <tr>
+                  <td>법령상 보관 의무가 있는 자료</td>
+                  <td>해당 법령에 따른 별도 보관</td>
+                  <td>관련 법령에서 정한 기간까지 보관 후 삭제</td>
+                </tr>
+                <tr>
+                  <td>슈퍼 관리자 계정</td>
+                  <td>삭제 요청 불가(요청 단계에서 차단)</td>
+                  <td>운영 정책에 따라 계정 유지</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h2>4. 문의처</h2>
+            <ul>
+              <li>이메일: boscsafety@gmail.com</li>
+              <li>전화: 010-9235-1687</li>
+            </ul>
+
+            <p>최종 업데이트: 2026-03-06</p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+  <script>
+    (function () {
+      var btn = document.getElementById("requestDeleteBtn");
+      var accountTypeEl = document.getElementById("accountType");
+      var blockedText = document.getElementById("superAdminBlockedText");
+      var nameEl = document.getElementById("name");
+      var accountIdEl = document.getElementById("accountId");
+      var contactEl = document.getElementById("contact");
+      var reasonEl = document.getElementById("reason");
+
+      if (!btn || !accountTypeEl || !blockedText) {
+        return;
+      }
+
+      function createBody() {
+        var lines = [
+          "아래 정보로 계정 삭제를 요청합니다.",
+          "",
+          "계정 유형: " + (accountTypeEl.options[accountTypeEl.selectedIndex] ? accountTypeEl.options[accountTypeEl.selectedIndex].text : ""),
+          "성함: " + (nameEl.value || ""),
+          "가입 이메일 또는 휴대전화번호: " + (accountIdEl.value || ""),
+          "회신 연락처: " + (contactEl.value || ""),
+          "삭제 사유: " + (reasonEl.value || "(미입력)")
+        ];
+        return lines.join("\n");
+      }
+
+      btn.addEventListener("click", function () {
+        if (accountTypeEl.value === "super_admin") {
+          blockedText.style.display = "block";
+          return;
+        }
+
+        blockedText.style.display = "none";
+        var subject = "[안전한하루] 계정 삭제 요청";
+        var body = createBody();
+        var mailto = "mailto:boscsafety@gmail.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+        window.location.href = mailto;
+      });
+    })();
+  </script>
+</body>
+
+</html>

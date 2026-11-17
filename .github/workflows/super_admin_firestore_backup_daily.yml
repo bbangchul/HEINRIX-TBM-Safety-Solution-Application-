@@ -1,0 +1,52 @@
+name: super-admin-firestore-backup-daily
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_id:
+        description: "Target Firebase project id"
+        required: false
+        default: "tbm-application-v2"
+      backup_bucket:
+        description: "GCS bucket for Firestore exports"
+        required: false
+        default: "heinrix-sa24-backup-458920639110-20260307"
+      backup_prefix:
+        description: "GCS path prefix for backup artifacts"
+        required: false
+        default: "super_admin_backups/firestore"
+  schedule:
+    - cron: "0 18 * * *"
+
+jobs:
+  firestore-backup-export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      BACKUP_PROJECT_ID: ${{ github.event.inputs.project_id || vars.SUPER_ADMIN_PROJECT_ID || 'tbm-application-v2' }}
+      BACKUP_BUCKET: ${{ github.event.inputs.backup_bucket || vars.SUPER_ADMIN_BACKUP_BUCKET || 'heinrix-sa24-backup-458920639110-20260307' }}
+      BACKUP_PREFIX: ${{ github.event.inputs.backup_prefix || vars.SUPER_ADMIN_BACKUP_PREFIX || 'super_admin_backups/firestore' }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: validate-gcp-secret
+        env:
+          SA_KEY_JSON: ${{ secrets.SUPER_ADMIN_GCP_SA_KEY_JSON }}
+        run: |
+          if [[ -z "${SA_KEY_JSON:-}" ]]; then
+            echo "Missing secret: SUPER_ADMIN_GCP_SA_KEY_JSON"
+            exit 1
+          fi
+
+      - name: auth-gcp
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.SUPER_ADMIN_GCP_SA_KEY_JSON }}
+
+      - name: setup-gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: firestore-export
+        run: |
+          bash super_admin_console/scripts/ops/firestore_backup_export.sh "$BACKUP_PROJECT_ID" "$BACKUP_BUCKET"

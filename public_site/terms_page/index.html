@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>이용약관 | 안전한하루</title>
+  <meta name="description" content="안전한하루 이용약관" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="icon" type="image/png" href="/icon.png" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700&family=Noto+Sans+KR:wght@400;500;700&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f4fcf9;
+      --surface: #ffffff;
+      --ink: #08152d;
+      --ink-muted: #253d66;
+      --line: #d8e7f4;
+      --primary: #00c98b;
+      --primary-dark: #00a774;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 5% 0%, rgba(0, 201, 139, 0.08), transparent 35%),
+        radial-gradient(circle at 95% 90%, rgba(37, 61, 102, 0.06), transparent 30%),
+        var(--bg);
+      color: var(--ink);
+      font-family: "DM Sans", "Noto Sans KR", sans-serif;
+      line-height: 1.7;
+    }
+
+    .wrap {
+      width: min(980px, 100% - 32px);
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(244, 252, 249, 0.85);
+      border-bottom: 1px solid rgba(216, 231, 244, 0.8);
+    }
+
+    .topbar-inner {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--ink);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .brand-app-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: block;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+
+    .brand-wordmark {
+      width: auto;
+      height: 25.6px;
+      display: block;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .top-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 0.92rem;
+    }
+
+    .top-links a {
+      color: var(--ink-muted);
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 8px;
+    }
+
+    .top-links a:hover {
+      background: rgba(0, 201, 139, 0.1);
+      color: var(--ink);
+    }
+
+    main {
+      padding: 42px 0 64px;
+    }
+
+    .policy-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(8, 21, 45, 0.06);
+      overflow: hidden;
+    }
+
+    .policy-head {
+      padding: 30px 28px 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(0, 201, 139, 0.07), rgba(0, 201, 139, 0));
+    }
+
+    .policy-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      border-radius: 999px;
+      background: rgba(0, 201, 139, 0.12);
+      color: #00865f;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 10px 0 6px;
+      font-size: clamp(1.45rem, 2.6vw, 2rem);
+      line-height: 1.3;
+    }
+
+    .policy-sub {
+      margin: 0;
+      color: var(--ink-muted);
+      font-size: 0.95rem;
+    }
+
+    .policy-body {
+      padding: 22px 28px 30px;
+    }
+
+    .policy-content h2 {
+      margin: 26px 0 12px;
+      font-size: 1.25rem;
+      line-height: 1.4;
+      color: #0e2447;
+    }
+
+    .policy-content h2:first-child {
+      margin-top: 0;
+    }
+
+    .policy-content p {
+      margin: 0 0 12px;
+      font-size: 0.97rem;
+      color: #102445;
+      line-height: 1.9;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+
+    .policy-content ul {
+      margin: 0 0 14px;
+      padding-left: 20px;
+    }
+
+    .policy-content li {
+      margin: 0 0 6px;
+      color: #102445;
+      font-size: 0.96rem;
+      line-height: 1.85;
+    }
+
+    .policy-meta {
+      margin-top: 24px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--ink-muted);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 720px) {
+      .topbar-inner {
+        height: 58px;
+      }
+
+      .top-links {
+        gap: 6px;
+        font-size: 0.86rem;
+      }
+
+      .policy-head,
+      .policy-body {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .policy-content h2 {
+        font-size: 1.16rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a class="brand" href="/">
+        <img class="brand-app-icon" src="/assets/icon.png" alt="" />
+        <img class="brand-wordmark" src="/assets/anha-jeonhanharu-logo.png" alt="안전한하루" />
+      </a>
+      <nav class="top-links" aria-label="페이지 이동">
+        <a href="/">홈</a>
+        <a href="/terms" aria-current="page">이용약관</a>
+        <a href="/privacy">개인정보처리방침</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <article class="policy-card">
+        <div class="policy-head">
+          <span class="policy-badge">LEGAL</span>
+          <h1>안전한하루 서비스 이용약관 (DRAFT)</h1>
+          <p class="policy-sub">Version 2026-02-28 | Effective date 2026-02-28</p>
+        </div>
+        <div class="policy-body">
+          <div class="policy-content">
+            <h2 id="sec-1">1. 목적</h2>
+            <p>본 약관은 보스크(대표자: 방성철, Google Play 개발자 이름: Bosc, 이하 &quot;회사&quot;)가 제공하는 안전한하루 앱(이하 &quot;서비스&quot;)의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.</p>
+            <p>본 약관은 전자문서 및 전자거래 방식으로 체결되는 서비스 이용계약에 적용되며, 관련 법령(전자상거래 등에서의 소비자보호에 관한 법률 등)을 준수합니다.</p>
+            <p>본 서비스는 산업·건설 현장 사업주 및 종사자를 대상으로 하는 B2B 안전관리 지원 서비스이며, 회사는 만 14세 미만 아동의 이용을 허용하지 않습니다.</p>
+
+            <h2 id="sec-2">2. 정의</h2>
+            <ul>
+              <li>&quot;이용자&quot;란 본 약관에 따라 서비스를 이용하는 회원 및 참여 사용자를 말합니다.</li>
+              <li>&quot;회사&quot;란 서비스 운영 주체를 말합니다.</li>
+              <li>&quot;현장&quot; 또는 &quot;프로젝트&quot;란 서비스 내에서 안전관리, TBM 운영, 출석 및 참여 정보가 관리되는 단위를 말합니다.</li>
+              <li>&quot;관리자&quot;란 회사 관리자, 프로젝트 관리자, TBM 리더 등 운영 권한을 가진 사용자를 말합니다.</li>
+              <li>&quot;근로자&quot;란 프로젝트 참여자로서 출석, 서명, 안전정보 확인 등의 기능을 이용하는 사용자를 말합니다.</li>
+            </ul>
+
+            <h2 id="sec-3">3. 약관의 효력 및 변경</h2>
+            <ul>
+              <li>본 약관은 이용자가 회원가입 또는 서비스 최초 이용 시 명확한 동의 절차(체크박스 등 전자적 동의)를 완료함으로써 효력이 발생합니다.</li>
+              <li>회사는 관련 법령 및 서비스 운영 정책에 따라 약관을 변경할 수 있습니다.</li>
+              <li>약관이 변경되는 경우 회사는 시행일 및 변경 내용을 사전에 공지하거나 서비스 내에서 고지합니다.</li>
+              <li>중대한 변경의 경우 회사는 재동의 절차를 요구할 수 있습니다.</li>
+            </ul>
+
+            <h2 id="sec-4">4. 서비스 내용</h2>
+            <p>회사는 다음 각 호의 기능을 제공합니다.</p>
+            <ul>
+              <li>회원가입, 로그인 및 계정 관리</li>
+              <li>회사/프로젝트 참여 및 권한 관리</li>
+              <li>TBM 작성, 확인, 종료 및 이력 관리</li>
+              <li>출석 시작, 출결 상태 관리 및 참여 현황 확인</li>
+              <li>전자서명 등록 및 서명 확인</li>
+              <li>안전 메뉴얼, 공지, 비상연락망 등 안전 정보 열람</li>
+              <li>프로젝트별 또는 회사별 안전관리 운영 지원 기능</li>
+            </ul>
+            <p>회사는 운영상 또는 기술상 필요에 따라 서비스의 일부를 변경, 제한 또는 중단할 수 있습니다.</p>
+
+            <h2 id="sec-5">5. 회원가입 및 계정 이용</h2>
+            <ul>
+              <li>이용자는 본인의 정확한 정보를 제공해야 합니다.</li>
+              <li>이용자는 본인 계정을 직접 관리해야 하며, 타인에게 계정을 양도, 대여 또는 공유해서는 안 됩니다.</li>
+              <li>회사는 허위 정보 제공, 권한 없는 현장 접근, 보안 위반이 확인되는 경우 계정 이용을 제한할 수 있습니다.</li>
+              <li>이용자는 타인의 명의를 도용하거나 허위 정보를 이용하여 가입해서는 안 되며, 이에 따른 모든 책임은 해당 이용자에게 있습니다.</li>
+            </ul>
+
+            <h2 id="sec-6">6. 이용자 정보 및 프로젝트 정보의 입력</h2>
+            <ul>
+              <li>이용자는 이름, 휴대전화번호, 소속, 직종 등 서비스 운영에 필요한 정보를 정확하게 입력해야 합니다.</li>
+              <li>관리자 및 권한 보유자는 프로젝트, 근로자, 출석, 비상연락망, 안전 메뉴얼 등 운영 데이터를 업무 목적에 한해 등록 및 관리할 수 있습니다.</li>
+              <li>이용자는 타인의 개인정보나 서명을 무단으로 등록, 수정, 삭제해서는 안 됩니다.</li>
+            </ul>
+
+            <h2 id="sec-7">7. 전자서명 및 출석 확인</h2>
+            <ul>
+              <li>서비스 내 전자서명은 현장 안전 확인, TBM 참여 확인 및 관련 이력 관리 목적에 사용됩니다.</li>
+              <li>출석 및 전자서명 정보는 프로젝트 안전관리 및 내부 증빙 목적에 활용될 수 있습니다.</li>
+              <li>이용자는 본인이 직접 서명 및 출석 확인 절차를 진행해야 하며, 타인을 대신한 허위 입력을 해서는 안 됩니다.</li>
+            </ul>
+
+            <h2 id="sec-8">8. 금지행위</h2>
+            <p>이용자는 다음 행위를 해서는 안 됩니다.</p>
+            <ul>
+              <li>허위 정보 입력 또는 타인 정보 도용</li>
+              <li>권한 없는 프로젝트 또는 회사 데이터 접근 시도</li>
+              <li>타인의 서명, 출석, 개인정보를 무단 변경하는 행위</li>
+              <li>서비스 장애 유발, 비정상 트래픽 전송, 보안 우회 시도</li>
+              <li>관련 법령, 안전 규정, 회사 정책에 위반되는 행위</li>
+              <li>서비스 또는 관련 시스템에 대한 해킹, 악성코드 배포, 비정상 접근 시도</li>
+              <li>회사의 사전 동의 없이 서비스 정보를 상업적으로 이용하는 행위</li>
+              <li>관련 법령상 금지된 행위</li>
+            </ul>
+
+            <h2 id="sec-9">9. 서비스 이용 제한</h2>
+            <p>회사는 다음 사유가 있는 경우 관련 법령 범위 내에서 서비스 이용을 제한하거나 계정을 정지할 수 있습니다.</p>
+            <ul>
+              <li>본 약관 또는 운영정책 위반</li>
+              <li>관계 법령 위반 또는 수사기관 요청</li>
+              <li>서비스 보안 또는 안정성 저해 우려</li>
+              <li>현장 안전관리상 즉시 제한이 필요한 경우</li>
+            </ul>
+
+            <h2 id="sec-10">10. 데이터 보관 및 책임 제한</h2>
+            <ul>
+              <li>회사는 서비스 품질 향상, 보안, 운영기록 보존을 위해 프로젝트 운영기록, 출석기록, 전자서명, 메뉴얼 열람기록 등을 보관할 수 있습니다.</li>
+              <li>회사는 고의 또는 중과실이 없는 한 천재지변, 통신장애, 제3자 서비스 장애, 이용자 귀책 사유 등 불가항력적 사유로 발생한 손해에 대하여 책임을 부담하지 않습니다.</li>
+              <li>회사는 서비스의 안정적 운영을 위해 합리적인 수준의 보안 및 관리 조치를 취하나, 이용자가 입력한 정보의 정확성 및 적법성까지 보증하지는 않습니다.</li>
+              <li>서비스는 안전관리 지원 도구이며, 개별 현장의 법적 안전관리 의무를 직접 대체하지 않습니다.</li>
+            </ul>
+
+            <h2 id="sec-11">11. 지식재산권</h2>
+            <ul>
+              <li>서비스, UI, 소프트웨어, 문서, 로고, 운영 자료에 대한 권리는 회사 또는 정당한 권리자에게 귀속됩니다.</li>
+              <li>이용자는 회사의 사전 승인 없이 서비스를 복제, 배포, 역설계, 상업적으로 이용할 수 없습니다.</li>
+            </ul>
+
+            <h2 id="sec-12">12. 손해배상</h2>
+            <p>이용자가 본 약관을 위반하여 회사에 손해가 발생한 경우, 회사는 해당 이용자에게 손해배상을 청구할 수 있습니다. 다만, 회사의 고의 또는 중과실로 인하여 이용자에게 손해가 발생한 경우에는 관련 법령에 따라 책임을 부담합니다.</p>
+
+            <h2 id="sec-13">13. 개인정보 보호</h2>
+            <p>회사는 관련 법령에 따라 이용자의 개인정보를 보호합니다. 개인정보 처리에 관한 상세 사항은 별도 개인정보처리방침에 따릅니다.</p>
+
+            <h2 id="sec-14">14. 해지 및 탈퇴</h2>
+            <ul>
+              <li>이용자는 관련 법령 및 회사 정책 범위 내에서 계정 해지 또는 탈퇴를 요청할 수 있습니다.</li>
+              <li>이용자가 계정 삭제를 요청하는 경우, 회사는 최근 로그인 확인 또는 로그인 제공자 재인증 등 본인 확인 절차를 요구할 수 있습니다.</li>
+              <li>탈퇴 또는 계정 종료 시에도 법령상 또는 운영상 필요한 데이터는 일정 기간 보관될 수 있습니다.</li>
+              <li>회사/프로젝트 운영 기록, 결제·정산 기록, 감사 로그, 증빙 자료 등은 문서 자체를 유지하되 작성자 또는 행위자 식별 정보는 삭제 또는 비식별화할 수 있습니다.</li>
+              <li>회사 단위 결제/구독 상태 및 거래 원장은 거래일 또는 마지막 구매일 기준 5년간 보관될 수 있습니다.</li>
+            </ul>
+
+            <h2 id="sec-15">15. 준거법 및 관할</h2>
+            <ul>
+              <li>본 약관은 대한민국 법령을 준거법으로 합니다.</li>
+              <li>서비스 이용과 관련한 분쟁은 관련 법령에 따른 관할 법원을 따릅니다.</li>
+            </ul>
+
+            <h2 id="sec-16">16. 문의</h2>
+            <p>서비스 이용과 관련한 문의는 회사가 별도로 고지하는 고객지원 또는 관리자 연락 채널을 통해 접수할 수 있습니다.</p>
+
+            <p class="policy-meta">Version: 2026-02-28<br />Effective date: 2026-02-28</p>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+</body>
+
+</html>

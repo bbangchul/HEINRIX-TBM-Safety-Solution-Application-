@@ -21,9 +21,9 @@ jobs:
     env:
       MONITORING_PROJECT_ID: ${{ github.event.inputs.project_id || vars.SUPER_ADMIN_PROJECT_ID || 'tbm-application-v2' }}
       MONITORING_FRESHNESS: ${{ github.event.inputs.freshness || '30m' }}
-      ERROR_MAX: ${{ vars.SUPER_ADMIN_ALERT_ERROR_MAX || '5' }}
-      PERMISSION_DENIED_MAX: ${{ vars.SUPER_ADMIN_ALERT_PERMISSION_DENIED_MAX || '25' }}
-      UNAUTH_MAX: ${{ vars.SUPER_ADMIN_ALERT_UNAUTH_MAX || '20' }}
+      ERROR_MAX: ${{ vars.SUPER_ADMIN_ALERT_ERROR_MAX || '3' }}
+      PERMISSION_DENIED_MAX: ${{ vars.SUPER_ADMIN_ALERT_PERMISSION_DENIED_MAX || '12' }}
+      UNAUTH_MAX: ${{ vars.SUPER_ADMIN_ALERT_UNAUTH_MAX || '8' }}
       DELETE_ERROR_MAX: ${{ vars.SUPER_ADMIN_ALERT_DELETE_ERROR_MAX || '0' }}
     steps:
       - name: checkout

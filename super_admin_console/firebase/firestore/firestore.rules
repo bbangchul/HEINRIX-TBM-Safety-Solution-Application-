@@ -1,0 +1,318 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function requesterDocExists() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function requesterDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function authRole() {
+      return request.auth.token.role != null
+        ? request.auth.token.role
+        : (requesterDocExists() ? requesterDoc().role : null);
+    }
+
+    function isSelf(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isSuperAdmin() {
+      return authRole() == "super_admin";
+    }
+
+    function isCompanyAdmin() {
+      return authRole() == "company_admin";
+    }
+
+    function isProjectAdmin() {
+      return authRole() == "project_admin";
+    }
+
+    function isAdmin() {
+      return isSuperAdmin() || isCompanyAdmin() || isProjectAdmin();
+    }
+
+    function hasCompany(companyId) {
+      return companyId != null
+        && requesterDocExists()
+        && requesterDoc().companyIds != null
+        && companyId in requesterDoc().companyIds;
+    }
+
+    function hasProject(projectId) {
+      return projectId != null
+        && requesterDocExists()
+        && requesterDoc().projectIds != null
+        && projectId in requesterDoc().projectIds;
+    }
+
+    function isCompanyAdminFor(companyId) {
+      return isCompanyAdmin() && hasCompany(companyId);
+    }
+
+    function isProjectAdminFor(projectId) {
+      return isProjectAdmin() && hasProject(projectId);
+    }
+
+    function isProtectedUserDocument() {
+      return resource.data.role == "super_admin" || resource.data.superAdminProtected == true;
+    }
+
+    function canSelfUpdateUserProfile() {
+      return request.resource.data.role == resource.data.role
+        && request.resource.data.status == resource.data.status
+        && request.resource.data.superAdminProtected == resource.data.superAdminProtected
+        && (
+          !("fcmTokens" in request.resource.data)
+          || (
+            request.resource.data.fcmTokens is list
+            && request.resource.data.fcmTokens.size() <= 10
+          )
+        )
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          "displayName",
+          "phoneNumber",
+          "photoUrl",
+          "locale",
+          "timezone",
+          "notificationSettings",
+          "fcmTokens",
+          "updatedAt",
+          "updatedBy"
+        ]);
+    }
+
+    function validDeletionStatus(status) {
+      return status in [
+        "requested",
+        "in_review",
+        "approved",
+        "rejected",
+        "completed",
+        "cancelled"
+      ];
+    }
+
+    function validDeletionTransition(fromStatus, toStatus) {
+      return (
+        fromStatus == "requested" && toStatus in ["in_review", "approved", "rejected", "cancelled"]
+      ) || (
+        fromStatus == "in_review" && toStatus in ["approved", "rejected", "cancelled"]
+      ) || (
+        fromStatus == "approved" && toStatus in ["completed", "cancelled"]
+      );
+    }
+
+    function validCompanyApprovalStatus(status) {
+      return status in [
+        "requested",
+        "approved",
+        "rejected",
+        "cancelled"
+      ];
+    }
+
+    function validCompanyApprovalTransition(fromStatus, toStatus) {
+      return (
+        fromStatus == "requested" && toStatus in ["approved", "rejected", "cancelled"]
+      );
+    }
+
+    function deletionTargetUserExists(targetUid) {
+      return targetUid != null
+        && exists(/databases/$(database)/documents/users/$(targetUid));
+    }
+
+    function deletionTargetUserDoc(targetUid) {
+      return get(/databases/$(database)/documents/users/$(targetUid)).data;
+    }
+
+    function deletionTargetNotProtected(targetUid) {
+      return deletionTargetUserExists(targetUid)
+        && deletionTargetUserDoc(targetUid).role != "super_admin"
+        && deletionTargetUserDoc(targetUid).superAdminProtected != true;
+    }
+
+    match /users/{uid} {
+      allow read: if isSelf(uid) || isAdmin();
+      allow create: if isSuperAdmin();
+      allow update: if isSuperAdmin() || (isSelf(uid) && canSelfUpdateUserProfile());
+      allow delete: if isSuperAdmin() && !isProtectedUserDocument();
+    }
+
+    match /companies/{companyId} {
+      allow read: if isSuperAdmin() || isCompanyAdminFor(companyId);
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    match /companyApprovalRequests/{requestId} {
+      allow read: if isSuperAdmin();
+
+      allow create: if isSignedIn()
+        && !isSuperAdmin()
+        && request.resource.data.companyId is string
+        && exists(/databases/$(database)/documents/companies/$(request.resource.data.companyId))
+        && get(/databases/$(database)/documents/companies/$(request.resource.data.companyId)).data.ownerUid == request.auth.uid
+        && request.resource.data.requesterUid == request.auth.uid
+        && request.resource.data.status == "requested"
+        && validCompanyApprovalStatus(request.resource.data.status)
+        && request.resource.data.reviewedBy == null
+        && request.resource.data.reviewedAt == null
+        && request.resource.data.createdBy == request.auth.uid
+        && request.resource.data.updatedBy == request.auth.uid
+        && request.resource.data.keys().hasAll([
+          "companyId",
+          "requesterUid",
+          "status",
+          "createdAt",
+          "updatedAt",
+          "createdBy",
+          "updatedBy"
+        ])
+        && request.resource.data.keys().hasOnly([
+          "companyId",
+          "requesterUid",
+          "status",
+          "reason",
+          "reviewedBy",
+          "reviewedAt",
+          "createdAt",
+          "updatedAt",
+          "createdBy",
+          "updatedBy"
+        ]);
+
+      allow update: if isSuperAdmin()
+        && request.resource.data.companyId == resource.data.companyId
+        && request.resource.data.requesterUid == resource.data.requesterUid
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.createdBy == resource.data.createdBy
+        && request.resource.data.reason == resource.data.reason
+        && validCompanyApprovalStatus(request.resource.data.status)
+        && validCompanyApprovalTransition(resource.data.status, request.resource.data.status)
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+          "status",
+          "reviewedBy",
+          "reviewedAt",
+          "updatedAt",
+          "updatedBy"
+        ]);
+
+      allow delete: if false;
+    }
+
+    match /projects/{projectId} {
+      allow read: if isSuperAdmin()
+        || isProjectAdminFor(projectId)
+        || isCompanyAdminFor(resource.data.companyId);
+      allow create: if isSuperAdmin()
+        || isCompanyAdminFor(request.resource.data.companyId);
+      allow update, delete: if isSuperAdmin()
+        || isCompanyAdminFor(resource.data.companyId);
+    }
+
+    match /memberships/{membershipId} {
+      allow read: if isSuperAdmin()
+        || isSelf(resource.data.uid)
+        || isCompanyAdminFor(resource.data.companyId)
+        || isProjectAdminFor(resource.data.projectId);
+
+      allow create: if isSuperAdmin()
+        || (
+          isCompanyAdminFor(request.resource.data.companyId)
+          && request.resource.data.role != "super_admin"
+        );
+
+      allow update: if isSuperAdmin()
+        || (
+          isCompanyAdminFor(resource.data.companyId)
+          && resource.data.role != "super_admin"
+          && request.resource.data.role != "super_admin"
+        );
+
+      allow delete: if isSuperAdmin()
+        || (
+          isCompanyAdminFor(resource.data.companyId)
+          && resource.data.role != "super_admin"
+        );
+    }
+
+    match /deletionRequests/{requestId} {
+      allow read: if isSuperAdmin()
+        || isSelf(resource.data.requesterUid)
+        || isSelf(resource.data.targetUid);
+
+      allow create: if isSignedIn()
+        && request.resource.data.requesterUid == request.auth.uid
+        && request.resource.data.targetRole in ["company_admin", "project_admin", "worker"]
+        && deletionTargetUserExists(request.resource.data.targetUid)
+        && deletionTargetNotProtected(request.resource.data.targetUid)
+        && request.resource.data.targetRole == deletionTargetUserDoc(request.resource.data.targetUid).role
+        && request.resource.data.status == "requested"
+        && validDeletionStatus(request.resource.data.status);
+
+      allow update: if (
+          isSuperAdmin()
+          && resource.data.targetRole != "super_admin"
+          && request.resource.data.targetRole == resource.data.targetRole
+          && request.resource.data.requesterUid == resource.data.requesterUid
+          && request.resource.data.targetUid == resource.data.targetUid
+          && request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.createdBy == resource.data.createdBy
+          && request.resource.data.reason == resource.data.reason
+          && validDeletionStatus(request.resource.data.status)
+          && validDeletionTransition(resource.data.status, request.resource.data.status)
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+            "status",
+            "reviewComment",
+            "reviewedBy",
+            "reviewedAt",
+            "updatedAt",
+            "updatedBy"
+          ])
+        ) || (
+          isSelf(resource.data.requesterUid)
+          && resource.data.status == "requested"
+          && request.resource.data.status == "cancelled"
+          && request.resource.data.requesterUid == resource.data.requesterUid
+          && request.resource.data.targetUid == resource.data.targetUid
+          && request.resource.data.targetRole == resource.data.targetRole
+          && request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.createdBy == resource.data.createdBy
+          && request.resource.data.reason == resource.data.reason
+          && request.resource.data.reviewComment == resource.data.reviewComment
+          && request.resource.data.reviewedBy == resource.data.reviewedBy
+          && request.resource.data.reviewedAt == resource.data.reviewedAt
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly([
+            "status",
+            "updatedAt",
+            "updatedBy"
+          ])
+        );
+
+      allow delete: if false;
+    }
+
+    match /auditLogs/{logId} {
+      allow read: if isSuperAdmin()
+        || isCompanyAdminFor(resource.data.companyId);
+      allow create, update, delete: if false;
+    }
+
+    match /systemConfigs/{configKey} {
+      allow read: if isAdmin();
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

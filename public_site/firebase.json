@@ -1,0 +1,59 @@
+{
+  "hosting": {
+    "site": "tbm-application-v2",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      ".firebaserc",
+      ".vscode/**",
+      ".codex/**",
+      ".github/**",
+      "firebase-debug.log",
+      "super_admin_console/**",
+      "super_admin_firebase_admin_plan.csv",
+      "**/node_modules/**",
+      "**/*.md",
+      "**/.DS_Store"
+    ],
+    "redirects": [
+      {
+        "source": "/terms/",
+        "destination": "/terms",
+        "type": 301
+      },
+      {
+        "source": "/privacy/",
+        "destination": "/privacy",
+        "type": 301
+      },
+      {
+        "source": "/account-deletion/",
+        "destination": "/account-deletion",
+        "type": 301
+      },
+      {
+        "source": "/business-info/",
+        "destination": "/business-info",
+        "type": 301
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "/terms",
+        "destination": "/terms_page/index.html"
+      },
+      {
+        "source": "/privacy",
+        "destination": "/privacy_page/index.html"
+      },
+      {
+        "source": "/account-deletion",
+        "destination": "/account_deletion_page/index.html"
+      },
+      {
+        "source": "/business-info",
+        "destination": "/business_info_page/index.html"
+      }
+    ]
+  }
+}

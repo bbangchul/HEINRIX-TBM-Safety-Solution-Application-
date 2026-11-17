@@ -1,0 +1,120 @@
+name: super-admin-step22-regression
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_id:
+        description: "Firebase project id"
+        required: false
+        default: "tbm-application-v2"
+      region:
+        description: "Cloud Functions region"
+        required: false
+        default: "asia-northeast3"
+      runtime_env:
+        description: "Expected auth environment claim"
+        required: false
+        default: "dev"
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "super_admin_console/**"
+      - ".github/workflows/super_admin_step22_regression.yml"
+  pull_request:
+    paths:
+      - "super_admin_console/**"
+      - ".github/workflows/super_admin_step22_regression.yml"
+  schedule:
+    - cron: "0 18 * * *"
+
+jobs:
+  static-guards:
+    name: static-guards
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup-node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            super_admin_console/firebase/functions/package-lock.json
+            super_admin_console/web/package-lock.json
+
+      - name: install-functions-deps
+        run: npm --prefix super_admin_console/firebase/functions ci
+
+      - name: install-web-deps
+        run: npm --prefix super_admin_console/web ci
+
+      - name: verify-admin-api-layer
+        run: npm --prefix super_admin_console/firebase/functions run verify:admin-api-layer
+
+      - name: verify-security-controls
+        run: npm --prefix super_admin_console/firebase/functions run verify:security-controls
+
+      - name: verify-callable-only-web
+        run: npm --prefix super_admin_console/web run verify:callable-only
+
+      - name: build-and-test-benefit-api
+        run: |
+          npm --prefix super_admin_console/firebase/functions run build
+          node --test super_admin_console/firebase/functions/scripts/company_benefits.test.cjs
+
+      - name: build-web
+        run: npm --prefix super_admin_console/web run build
+
+      - name: install-playwright-chromium
+        run: npx --prefix super_admin_console/web playwright install --with-deps chromium
+
+      - name: smoke-ui-web
+        run: npm --prefix super_admin_console/web run test:smoke:ui
+
+  regression-e2e-live:
+    name: regression-e2e-live
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: static-guards
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' }}
+    env:
+      FIREBASE_API_KEY: ${{ secrets.SUPER_ADMIN_FIREBASE_API_KEY }}
+      REGRESSION_TEST_PROJECT_ID: ${{ github.event.inputs.project_id || vars.SUPER_ADMIN_PROJECT_ID || 'tbm-application-v2' }}
+      REGRESSION_TEST_REGION: ${{ github.event.inputs.region || vars.SUPER_ADMIN_FUNCTIONS_REGION || 'asia-northeast3' }}
+      REGRESSION_TEST_RUNTIME_ENV: ${{ github.event.inputs.runtime_env || vars.SUPER_ADMIN_RUNTIME_ENV || 'dev' }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup-node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            super_admin_console/firebase/functions/package-lock.json
+            super_admin_console/web/package-lock.json
+
+      - name: validate-live-secrets
+        env:
+          SA_KEY_JSON: ${{ secrets.SUPER_ADMIN_GCP_SA_KEY_JSON }}
+        run: |
+          SA_KEY_PATH="${RUNNER_TEMP}/gcp-sa.json"
+          if [[ -z "${FIREBASE_API_KEY:-}" ]]; then
+            echo "Missing secret: SUPER_ADMIN_FIREBASE_API_KEY"
+            exit 1
+          fi
+          if [[ -z "${SA_KEY_JSON:-}" ]]; then
+            echo "Missing secret: SUPER_ADMIN_GCP_SA_KEY_JSON"
+            exit 1
+          fi
+          printf '%s' "$SA_KEY_JSON" > "$SA_KEY_PATH"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$SA_KEY_PATH" >> "$GITHUB_ENV"
+
+      - name: run-regression-e2e-gate
+        run: bash super_admin_console/scripts/ci_regression_e2e_gate.sh

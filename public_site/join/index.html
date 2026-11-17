@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Heinrix 초대 링크</title>
+  <link rel="icon" type="image/png" href="/icon.png" />
+  <style>
+    :root {
+      --bg: #f4f7f8;
+      --card: #ffffff;
+      --text: #0f172a;
+      --sub: #64748b;
+      --line: #dbe4ea;
+      --brand: #10b981;
+      --brand-soft: #d1fae5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+        "Noto Sans KR", "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    main {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 520px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 24px;
+    }
+
+    .chip {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--brand-soft);
+      color: var(--brand);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    h1 {
+      margin: 12px 0 8px;
+      font-size: 24px;
+    }
+
+    p {
+      margin: 0;
+      color: var(--sub);
+      line-height: 1.5;
+    }
+
+    .token-box {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px dashed var(--line);
+      background: #f8fafc;
+      font-size: 13px;
+      color: var(--sub);
+      word-break: break-all;
+    }
+
+    .actions {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    button,
+    a.btn {
+      appearance: none;
+      border: 0;
+      border-radius: 12px;
+      padding: 13px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--brand);
+      color: #fff;
+    }
+
+    .btn-ghost {
+      background: #eef2f7;
+      color: #334155;
+    }
+
+    .error {
+      margin-top: 12px;
+      color: #ef4444;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .ok {
+      margin-top: 12px;
+      color: var(--brand);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .hint {
+      margin-top: 10px;
+      color: #475569;
+      font-size: 13px;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <section class="card">
+      <span class="chip">Heinrix</span>
+      <h1>초대 링크</h1>
+      <p>
+        앱이 설치되어 있으면 바로 열고, 설치 전이면 링크를 복사해 앱의
+        "초대링크로 가입" 입력창에 붙여넣으세요.
+      </p>
+      <div class="token-box" id="tokenBox"></div>
+      <div class="actions">
+        <a class="btn btn-primary" id="openAppBtn" href="#">앱 열기</a>
+        <button class="btn-ghost" id="copyBtn" type="button">링크 복사</button>
+      </div>
+      <div class="hint" id="hintText">잠시 후 앱 열기를 자동 시도합니다.</div>
+      <div class="error" id="errorText" style="display: none"></div>
+      <div class="ok" id="okText" style="display: none"></div>
+    </section>
+  </main>
+  <script>
+    (function () {
+      var tokenBox = document.getElementById("tokenBox");
+      var openAppBtn = document.getElementById("openAppBtn");
+      var copyBtn = document.getElementById("copyBtn");
+      var errorText = document.getElementById("errorText");
+      var okText = document.getElementById("okText");
+      var hintText = document.getElementById("hintText");
+      var pageBackgrounded = false;
+
+      var token = (new URLSearchParams(window.location.search).get("token") || "").trim();
+      if (!token) {
+        tokenBox.textContent = "유효한 token 이 없습니다.";
+        openAppBtn.style.display = "none";
+        copyBtn.style.display = "none";
+        hintText.style.display = "none";
+        errorText.style.display = "block";
+        errorText.textContent = "초대 링크가 올바르지 않습니다. 관리자에게 다시 요청해주세요.";
+        return;
+      }
+
+      var inviteUrl = "https://join.heinrix.com/join?token=" + encodeURIComponent(token);
+      // TODO: 앱출시되면 링크 넣기 (App Store / Play Store 다운로드 링크)
+      var appUrl = "heinrix://join?token=" + encodeURIComponent(token);
+      tokenBox.textContent = inviteUrl;
+      openAppBtn.href = appUrl;
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) pageBackgrounded = true;
+      });
+      window.addEventListener("pagehide", function () {
+        pageBackgrounded = true;
+      });
+      window.addEventListener("blur", function () {
+        pageBackgrounded = true;
+      });
+
+      function tryOpenApp(byUserGesture) {
+        if (!byUserGesture) {
+          okText.style.display = "none";
+          errorText.style.display = "none";
+        }
+        window.location.href = appUrl;
+        if (!byUserGesture) {
+          setTimeout(function () {
+            if (!pageBackgrounded) {
+              hintText.textContent = "자동 실행이 제한되면 아래 '앱 열기' 버튼을 눌러주세요.";
+            }
+          }, 1200);
+        }
+      }
+
+      openAppBtn.addEventListener("click", function (event) {
+        event.preventDefault();
+        tryOpenApp(true);
+      });
+
+      setTimeout(function () {
+        tryOpenApp(false);
+      }, 300);
+
+      copyBtn.addEventListener("click", async function () {
+        okText.style.display = "none";
+        errorText.style.display = "none";
+        try {
+          await navigator.clipboard.writeText(inviteUrl);
+          okText.style.display = "block";
+          okText.textContent = "초대 링크가 복사되었습니다.";
+        } catch (_) {
+          errorText.style.display = "block";
+          errorText.textContent = "복사에 실패했습니다. 링크를 수동으로 복사해주세요.";
+        }
+      });
+    })();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.bosc.tbm.application.v2",
+      "sha256_cert_fingerprints": [
+        "6E:C3:F7:26:84:4D:88:DC:DD:69:5B:F7:A2:7B:55:18:D2:0B:BE:CB:B0:16:E4:6F:0A:94:16:89:0E:78:B7:FA"
+      ]
+    }
+  }
+]
