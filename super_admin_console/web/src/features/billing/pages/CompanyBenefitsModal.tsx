@@ -101,7 +101,7 @@ export function CompanyBenefitsModal({ companyId, approvalRequestId, companyName
     {error && <p role="alert" className="error-inline">{error}</p>}
     {message && <p role="status" className="success-inline">{message}</p>}
     <button type="button" className="action-btn subtle" disabled={busy || coinBusy} onClick={() => { setError(null); setView(null); setReload(n => n + 1); }}>최신 상태 다시 불러오기</button>
-    <div className="table-actions" role="tablist" aria-label="회사 혜택 관리">
+    <div className="table-actions" role="tablist" aria-label="회사 결제 관리">
       {([["benefit", "혜택 설정·기간 변경"], ["coins", "코인 지급"], ["history", "이력"]] as const).map(([key, label]) =>
         <button key={key} type="button" role="tab" aria-selected={section === key}
           className={`action-btn ${section === key ? "primary" : "subtle"}`} disabled={busy || coinBusy}

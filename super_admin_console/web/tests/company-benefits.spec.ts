@@ -56,11 +56,12 @@ test.beforeEach(async ({ page }) => {
         id:'request-'+id+'-12345678901234567890',companyId:'test-'+id,approvedCompanyId:id==='pending'?null:'test-'+id,
         companyName:name,requesterUid:'qa-user-1234567890123456789012345678',status:id==='pending'?'pending':'approved'
       }));
+      rows.push({...rows[0],id:'old-duplicate-approval',companyName:'중복 승인 회사'});
       export const adminApi = {usingMockData:true,listCompanyApprovalRequests:async()=>rows};
     `,
   }));
   await page.route(/\/benefits(?:-list)?-test$/, route => route.fulfill({
-    contentType: "text/html",
+    contentType: "text/html; charset=utf-8",
     body: `<html><head><link rel="stylesheet" href="/src/styles.css"></head><body><div id="root"></div>
       <script type="module">
         import RefreshRuntime from '/@react-refresh';
@@ -72,13 +73,13 @@ test.beforeEach(async ({ page }) => {
       <script type="module">
         import React from '/node_modules/.vite/deps/react.js';
         import ReactDOM from '/node_modules/.vite/deps/react-dom_client.js';
-        import {CompanyBenefitsModal} from '/src/features/company-approval-requests/pages/CompanyBenefitsModal.tsx';
-        import {CompanyApprovalRequestsPage} from '/src/features/company-approval-requests/pages/CompanyApprovalRequestsPage.tsx';
+        import {CompanyBenefitsModal} from '/src/features/billing/pages/CompanyBenefitsModal.tsx';
+        import {BillingPage} from '/src/features/billing/pages/BillingPage.tsx';
         const listPage = React.createElement('div',{className:'admin-shell'},
           React.createElement('aside',{className:'admin-sidebar'},'안전한하루'),
           React.createElement('div',{className:'admin-main'},
             React.createElement('header',{className:'admin-topbar'},'관리자 콘솔'),
-            React.createElement('main',{className:'admin-content'},React.createElement(CompanyApprovalRequestsPage))));
+            React.createElement('main',{className:'admin-content'},React.createElement(BillingPage))));
         ReactDOM.createRoot(document.getElementById('root')).render(location.pathname.includes('list-test') ? listPage : React.createElement(CompanyBenefitsModal,{
           companyId:'test-company',approvalRequestId:'test-request',companyName:'테스트 회사',onClose:()=>{}
         }));
@@ -143,7 +144,7 @@ test("coin grant previews balance, confirms and shows history; retry keeps reque
   expect(ids[0]).toEqual(ids[1]);
 });
 
-test("approved-company list shows statuses, Korean end dates and appropriate actions", async ({ page }) => {
+test("billing list shows only approved companies, Korean end dates and appropriate actions", async ({ page }) => {
   await page.goto("/benefits-list-test");
   const active = page.getByRole("row").filter({ hasText: "활성 회사" });
   await expect(active.getByText("이용 중", { exact: true })).toBeVisible();
@@ -156,7 +157,8 @@ test("approved-company list shows statuses, Korean end dates and appropriate act
   await expect(page.getByRole("row").filter({ hasText: "내부 테스트 회사" }).getByText("기간 제한 없음")).toBeVisible();
   const pending = page.getByRole("row").filter({ hasText: "승인 대기 회사" });
   await expect(pending.getByRole("button", { name: "코인 지급", exact: true })).toHaveCount(0);
-  await expect(pending.getByText("승인 후 설정 가능")).toBeVisible();
+  await expect(pending).toHaveCount(0);
+  await expect(page.getByRole("row").filter({ hasText: "중복 승인 회사" })).toHaveCount(0);
   await active.getByRole("button", { name: "코인 지급", exact: true }).click();
   await expect(page.getByRole("tab", { name: "코인 지급", exact: true })).toHaveAttribute("aria-selected", "true");
   await expect(page.getByRole("button", { name: "기간 변경 저장" })).toHaveCount(0);
@@ -183,6 +185,17 @@ test("list recalculates expiry using refreshed server time", async ({ page }) =>
   });
   await expect(active.getByText("만료", { exact: true })).toBeVisible();
   await expect(active.getByRole("button", { name: "즉시 종료", exact: true })).toBeDisabled();
+});
+
+test("billing supports company search and free-use status filtering", async ({ page }) => {
+  await page.goto("/benefits-list-test");
+  await expect(page.getByRole("heading", { name: "결제 관리", exact: true })).toBeVisible();
+  await page.getByLabel("회사 검색").fill("활성 회사");
+  await expect(page.getByRole("row")).toHaveCount(2);
+  await page.getByLabel("회사 검색").fill("");
+  await page.getByLabel("무료 이용 상태").selectOption("expired");
+  await expect(page.getByRole("row")).toHaveCount(2);
+  await expect(page.getByRole("row").filter({ hasText: "만료 회사" })).toBeVisible();
 });
 
 for (const width of [1440, 1024, 768, 390, 320]) {

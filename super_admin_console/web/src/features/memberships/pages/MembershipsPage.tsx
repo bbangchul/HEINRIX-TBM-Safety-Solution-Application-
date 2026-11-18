@@ -202,7 +202,7 @@ export function MembershipsPage() {
 
   return (
     <>
-      <PageScaffold title="멤버십 관리" description="멤버십 생성/수정/삭제 액션을 실행합니다.">
+      <PageScaffold title="멤버십 관리" description="사용자의 회사·현장 소속과 역할을 관리합니다.">
         <div className="toolbar toolbar-grid-4">
           <label>
             목록 회사 ID

@@ -36,7 +36,7 @@ test.beforeEach(async ({ page, request }) => {
     <script type="module">import R from '/@react-refresh';R.injectIntoGlobalHook(window);window.$RefreshReg$=()=>{};window.$RefreshSig$=()=>t=>t;window.__vite_plugin_react_preamble_installed__=true;</script>
     <script type="module">
       import React from '/node_modules/.vite/deps/react.js';import DOM from '/node_modules/.vite/deps/react-dom_client.js';
-      import {CompanyBenefitsModal} from '/src/features/company-approval-requests/pages/CompanyBenefitsModal.tsx';
+      import {CompanyBenefitsModal} from '/src/features/billing/pages/CompanyBenefitsModal.tsx';
       DOM.createRoot(document.getElementById('root')).render(React.createElement(CompanyBenefitsModal,{companyId:'${fixture.companyId}',approvalRequestId:'${fixture.approvalRequestId}',companyName:'QA TEST ONLY',onClose:()=>{}}));
     </script></body></html>` }));
   await page.goto("/benefits-emulator-test");

@@ -9,6 +9,7 @@ import { MfaRequiredPage } from "./features/auth/pages/MfaRequiredPage";
 import { NotFoundPage } from "./features/auth/pages/NotFoundPage";
 import { CompaniesPage } from "./features/companies/pages/CompaniesPage";
 import { CompanyApprovalRequestsPage } from "./features/company-approval-requests/pages/CompanyApprovalRequestsPage";
+import { BillingPage } from "./features/billing/pages/BillingPage";
 import { DashboardPage } from "./features/dashboard/pages/DashboardPage";
 import { DeletionRequestsPage } from "./features/deletion-requests/pages/DeletionRequestsPage";
 import { MembershipsPage } from "./features/memberships/pages/MembershipsPage";
@@ -30,6 +31,7 @@ export default function App() {
             <Route index element={<DashboardPage />} />
             <Route path="companies" element={<CompaniesPage />} />
             <Route path="company-approval-requests" element={<CompanyApprovalRequestsPage />} />
+            <Route path="billing" element={<BillingPage />} />
             <Route path="projects" element={<ProjectsPage />} />
             <Route path="memberships" element={<MembershipsPage />} />
             <Route path="users" element={<UsersPage />} />

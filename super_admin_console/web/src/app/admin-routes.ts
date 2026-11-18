@@ -10,6 +10,7 @@ export const ADMIN_ROUTES: readonly AdminRoute[] = [
   { path: "/admin", name: "대시보드", allowedRoles: ["super_admin"] },
   { path: "/admin/companies", name: "회사 관리", allowedRoles: ["super_admin"] },
   { path: "/admin/company-approval-requests", name: "회사 승인 요청", allowedRoles: ["super_admin"] },
+  { path: "/admin/billing", name: "결제 관리", allowedRoles: ["super_admin"] },
   { path: "/admin/projects", name: "프로젝트 관리", allowedRoles: ["super_admin"] },
   { path: "/admin/memberships", name: "멤버십 관리", allowedRoles: ["super_admin"] },
   { path: "/admin/users", name: "사용자/권한", allowedRoles: ["super_admin"] },

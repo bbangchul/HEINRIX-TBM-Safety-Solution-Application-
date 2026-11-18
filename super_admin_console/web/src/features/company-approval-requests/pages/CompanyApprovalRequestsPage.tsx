@@ -1,9 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { ActionModal } from "../../../components/ui/ActionModal";
-import { CompanyBenefitsModal, type BenefitSection } from "./CompanyBenefitsModal";
-import { useCompanyBenefitSummaries } from "./useCompanyBenefitSummaries";
-import { BENEFIT_STATUS_LABELS } from "../../../lib/api/company-benefits-api";
-import { benefitEndLabel, benefitStatusAt } from "../../../lib/utils/company-benefits";
 import { DataTable, type DataColumn } from "../../../components/ui/DataTable";
 import { PageScaffold } from "../../../components/ui/PageScaffold";
 import { StatusBadge } from "../../../components/ui/StatusBadge";
@@ -77,14 +74,6 @@ export function CompanyApprovalRequestsPage() {
   const [mutatingKey, setMutatingKey] = useState<string | null>(null);
 
   const [detailTarget, setDetailTarget] = useState<CompanyApprovalRequestDoc | null>(null);
-  const [benefitTarget, setBenefitTarget] = useState<CompanyApprovalRequestDoc | null>(null);
-  const [benefitSection, setBenefitSection] = useState<BenefitSection>("benefit");
-  const [benefitRefresh, setBenefitRefresh] = useState(0);
-  const benefits = useCompanyBenefitSummaries(rows, benefitRefresh);
-
-  const openBenefits = (row: CompanyApprovalRequestDoc, section: BenefitSection) => {
-    setBenefitSection(section); setBenefitTarget(row);
-  };
   const [reviewTarget, setReviewTarget] = useState<CompanyApprovalRequestDoc | null>(null);
   const [nextStatus, setNextStatus] = useState<CompanyApprovalRequestStatus>("approved");
   const [rejectReason, setRejectReason] = useState("");
@@ -208,48 +197,14 @@ export function CompanyApprovalRequestsPage() {
       render: (row) => formatDateTime(row.submittedAt ?? row.createdAt),
     },
     {
-      key: "benefit",
-      header: "무료 이용 상태·종료일",
-      render: row => {
-        if (row.status !== "approved") return "승인 후 설정 가능";
-        if (!row.approvedCompanyId) return "승인 회사 연결 확인 필요";
-        if (benefits.error) return <button type="button" className="action-btn subtle"
-          onClick={() => setBenefitRefresh(n => n + 1)}>혜택 조회 재시도</button>;
-        const summary = benefits.summaries[row.approvedCompanyId];
-        if (!summary) return "혜택 조회 중...";
-        const state = benefitStatusAt(summary, benefits.serverNow);
-        return <div>
-          <StatusBadge label={BENEFIT_STATUS_LABELS[state]} tone={state === "active" ? "success" : state === "scheduled" ? "info" : "neutral"} />
-          <p>{benefitEndLabel(summary.benefit)}</p>
-          {state === "active" && <small>전체 유료 기능 · 코인 차감 없음</small>}
-        </div>;
-      },
-    },
-    {
       key: "actions",
       header: "액션",
-      sticky: "right",
+      width: "180px",
       render: (row) => (
-        <div className="table-actions company-approval-actions">
+        <div className="table-actions">
           <button type="button" className="action-btn subtle" onClick={() => setDetailTarget(row)}>
             상세
           </button>
-          {row.status === "approved" && row.approvedCompanyId && (() => {
-            const summary = benefits.summaries[row.approvedCompanyId];
-            const state = summary ? benefitStatusAt(summary, benefits.serverNow) : null;
-            const editable = state === "active" || state === "scheduled";
-            const unavailable = !summary || benefits.error;
-            return <>
-              <button type="button" className="action-btn primary" disabled={unavailable || editable}
-                onClick={() => openBenefits(row, "benefit")}>혜택 설정</button>
-              <button type="button" className="action-btn subtle" disabled={unavailable || !editable}
-                onClick={() => openBenefits(row, "benefit")}>기간 변경</button>
-              <button type="button" className="action-btn danger" disabled={unavailable || !editable}
-                onClick={() => openBenefits(row, "revoke")}>즉시 종료</button>
-              <button type="button" className="action-btn subtle" onClick={() => openBenefits(row, "coins")}>코인 지급</button>
-              <button type="button" className="action-btn subtle" onClick={() => openBenefits(row, "history")}>이력</button>
-            </>;
-          })()}
           {ALLOWED_TRANSITIONS[row.status].length === 0 ? (
             <span className="mono-text">{row.status === "approved" ? "승인 완료" : "종료 상태"}</span>
           ) : (
@@ -285,13 +240,8 @@ export function CompanyApprovalRequestsPage() {
 
   return (
     <>
-      {benefitTarget?.approvedCompanyId && <CompanyBenefitsModal
-        key={`${benefitTarget.id}-${benefitSection}`} companyId={benefitTarget.approvedCompanyId} approvalRequestId={benefitTarget.id}
-        companyName={benefitTarget.companyName ?? benefitTarget.approvedCompanyId}
-        initialSection={benefitSection} onChanged={() => setBenefitRefresh(n => n + 1)}
-        onClose={() => setBenefitTarget(null)} />}
       <PageScaffold title="회사 승인 요청" description="회사 가입 승인 요청을 조회하고 승인 또는 반려합니다.">
-        <p className="info-inline">승인된 회사의 무료 이용 혜택과 코인을 관리합니다. 기간은 한국 시간 기준이며 상태는 자동 갱신됩니다.</p>
+        <p className="info-inline">승인된 회사의 무료 이용 혜택과 코인은 <Link className="text-link" to="/admin/billing">결제 관리</Link>에서 관리할 수 있습니다.</p>
         <div className="toolbar toolbar-grid">
           <label>
             목록 상태 필터

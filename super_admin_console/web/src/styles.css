@@ -404,13 +404,13 @@ a {
   min-width: 0;
 }
 
-.company-approval-actions {
+.billing-actions {
   display: grid;
   grid-template-columns: repeat(3, max-content);
   align-items: center;
 }
 
-.company-approval-actions > .mono-text {
+.billing-actions > .mono-text {
   grid-column: 1 / -1;
 }
 
@@ -864,7 +864,7 @@ a {
     padding: 12px;
   }
 
-  .company-approval-actions {
+  .billing-actions {
     grid-template-columns: repeat(2, max-content);
   }
 
